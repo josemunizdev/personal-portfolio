@@ -1,0 +1,95 @@
+name: Build and deploy site
+
+# Pull requests get lint, typecheck, and build as a check.
+# Pushes to master also publish the static export to GitHub Pages.
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: web
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Resolve Pages base path
+        id: pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v6
+
+      - name: Print build context
+        run: |
+          echo "Event:       ${{ github.event_name }}"
+          echo "Ref:         ${{ github.ref }}"
+          echo "Commit:      ${{ github.sha }}"
+          echo "Node:        $(node --version)"
+          echo "npm:         $(npm --version)"
+          echo "Base path:   '${{ steps.pages.outputs.base_path }}' (empty means custom domain or PR build)"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build static export
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          npm run build
+          if [ ! -f out/index.html ]; then
+            echo "ERROR: out/index.html was not produced. Check that next.config.ts still sets output: 'export'."
+            exit 1
+          fi
+          echo "Export contents:"
+          ls -la out
+          echo "Total size: $(du -sh out | cut -f1)"
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: web/out
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+      - name: Report deployment URL
+        run: echo "Deployed to ${{ steps.deployment.outputs.page_url }}"
+        working-directory: .

@@ -1,5 +1,13 @@
+import { ConsoleHello } from "@/components/ConsoleHello";
 import { Header } from "@/components/Header";
+import { ImpactMetrics } from "@/components/ImpactMetrics";
+import { Memoji } from "@/components/Memoji";
+import { OffTheClock } from "@/components/OffTheClock";
+import { Pipeline } from "@/components/Pipeline";
 import { Section } from "@/components/Section";
+import { Skills } from "@/components/Skills";
+import { StickerBanner } from "@/components/Stickers";
+import { SystemsDiagram } from "@/components/SystemsDiagram";
 import { ArrowUpRightIcon, GitHubIcon, LinkedInIcon, MailIcon } from "@/components/icons";
 import { profile } from "@/data/profile";
 
@@ -20,41 +28,39 @@ export default function Home() {
       <Header />
       <main id="top" className="mx-auto max-w-5xl px-4 sm:px-6">
         {/* Hero */}
-        <section className="py-20 sm:py-28">
-          <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 font-mono text-xs text-muted">
-            <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
-            {profile.badge}
-          </p>
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
-            {profile.name}
-          </h1>
-          <p className="mt-3 text-xl text-muted sm:text-2xl">{profile.headline}</p>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pretty">{profile.subhead}</p>
-          <p className="mt-4 font-mono text-sm text-faint">{profile.location}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href={profile.links.github.href} className={linkClass}>
-              <GitHubIcon /> GitHub
-            </a>
-            <a href={profile.links.linkedin.href} className={linkClass}>
-              <LinkedInIcon /> LinkedIn
-            </a>
-            <a href={`mailto:${profile.email}`} className={linkClass}>
-              <MailIcon /> {profile.email}
-            </a>
+        <section className="grid items-center gap-10 py-16 sm:py-24 lg:grid-cols-[1.1fr_1fr]">
+          <div>
+            <Memoji />
+            <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 font-mono text-xs text-muted">
+              <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
+              {profile.badge}
+            </p>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
+              {profile.name}
+            </h1>
+            <p className="mt-3 text-xl text-muted sm:text-2xl">{profile.headline}</p>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-pretty">{profile.subhead}</p>
+            <p className="mt-4 font-mono text-sm text-faint">{profile.location}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href={profile.links.github.href} className={linkClass}>
+                <GitHubIcon /> GitHub
+              </a>
+              <a href={profile.links.linkedin.href} className={linkClass}>
+                <LinkedInIcon /> LinkedIn
+              </a>
+              <a href={`mailto:${profile.email}`} className={linkClass}>
+                <MailIcon /> {profile.email}
+              </a>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-line bg-surface/70 p-4 shadow-sm backdrop-blur-sm">
+            <SystemsDiagram />
           </div>
         </section>
 
         {/* Impact */}
         <section aria-label="Selected impact" className="pb-16 sm:pb-20">
-          <ul className="grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-            {profile.metrics.map((m) => (
-              <li key={m.label} className="bg-surface p-5">
-                <p className="font-mono text-2xl font-semibold tracking-tight text-accent">{m.value}</p>
-                <p className="mt-1 text-sm font-medium">{m.label}</p>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{m.detail}</p>
-              </li>
-            ))}
-          </ul>
+          <ImpactMetrics />
         </section>
 
         <Section id="about" title="About">
@@ -66,6 +72,7 @@ export default function Home() {
         </Section>
 
         <Section id="experience" title="Experience">
+          <Pipeline />
           <ol className="space-y-12">
             {profile.experience.map((role) => (
               <li key={`${role.org}-${role.title}`}>
@@ -146,20 +153,11 @@ export default function Home() {
         </Section>
 
         <Section id="skills" title="Tech stack">
-          <dl className="grid gap-8 sm:grid-cols-2">
-            {profile.skills.map((g) => (
-              <div key={g.name}>
-                <dt className="text-sm font-medium">{g.name}</dt>
-                <dd className="mt-3">
-                  <ul className="flex flex-wrap gap-1.5">
-                    {g.items.map((s) => (
-                      <Chip key={s}>{s}</Chip>
-                    ))}
-                  </ul>
-                </dd>
-              </div>
-            ))}
-          </dl>
+          <Skills />
+        </Section>
+
+        <Section id="off-the-clock" title="Off the clock">
+          <OffTheClock />
         </Section>
 
         <Section id="credentials" title="Credentials">
@@ -215,6 +213,9 @@ export default function Home() {
         </Section>
       </main>
       <footer className="border-t border-line">
+        <div className="mx-auto max-w-5xl px-4 pt-10 pb-2 sm:px-6">
+          <StickerBanner />
+        </div>
         <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-8 font-mono text-xs text-faint sm:flex-row sm:justify-between sm:px-6">
           <p>
             © {new Date().getFullYear()} {profile.name}
@@ -227,6 +228,7 @@ export default function Home() {
           </p>
         </div>
       </footer>
+      <ConsoleHello />
     </>
   );
 }

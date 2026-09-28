@@ -177,24 +177,43 @@ function Car({ id, label, index }: { id: string; label: string; index: number })
   );
 }
 
+// A puffy cloud built from overlapping circles, centered on (0, 0).
+function Cloud() {
+  return (
+    <g fill="var(--steam)" stroke="var(--steam-edge)" strokeWidth="1.2">
+      <circle cx="-6" cy="2" r="6" />
+      <circle cx="6" cy="2" r="6" />
+      <circle cx="0" cy="-3" r="7" />
+      <ellipse cx="0" cy="4" rx="10" ry="4" stroke="none" />
+    </g>
+  );
+}
+
 function Locomotive() {
   return (
     <li className="w-28 shrink-0 sm:w-32" aria-hidden="true">
-      <svg viewBox="0 0 128 80" className="animate-jostle w-full">
-        {/* Steam */}
-        <circle cx="96" cy="10" r="6" fill="var(--faint)" className="animate-puff" />
-        <circle cx="96" cy="10" r="5" fill="var(--faint)" className="animate-puff" style={{ animationDelay: "-0.7s" }} />
+      <svg viewBox="0 0 128 80" className="animate-jostle w-full overflow-visible">
+        {/* Steam clouds leave the stack and drift back and up, staggered so
+            there is always one forming, one rising, and one fading. */}
+        {[0, -0.7, -1.4].map((delay) => (
+          <g key={delay} transform="translate(96 12)">
+            <g className="animate-puff" style={{ animationDelay: `${delay}s` }}>
+              <Cloud />
+            </g>
+          </g>
+        ))}
         {/* Smokestack and boiler */}
-        <rect x="90" y="16" width="12" height="18" rx="2" fill="#2f2a36" />
+        <rect x="89" y="14" width="14" height="4" rx="1" fill="#2f2a36" />
+        <rect x="91" y="16" width="10" height="18" rx="2" fill="#2f2a36" />
         <rect x="44" y="30" width="72" height="26" rx="10" fill="var(--accent)" />
+        <rect x="60" y="30" width="4" height="26" fill="#2f2a36" opacity="0.25" />
+        <rect x="84" y="30" width="4" height="26" fill="#2f2a36" opacity="0.25" />
         <circle cx="116" cy="43" r="5" fill="#f4d35e" />
         {/* Cab */}
         <rect x="8" y="14" width="42" height="42" rx="4" fill="var(--talavera)" />
         <rect x="4" y="10" width="50" height="6" rx="2" fill="#2f2a36" />
-        <rect x="16" y="22" width="26" height="14" rx="2" fill="#dbe7fb" />
-        <text x="29" y="50" textAnchor="middle" fill="#ffffff" fontFamily="ui-monospace, monospace" fontSize="10" fontWeight="700">
-          JM
-        </text>
+        <rect x="16" y="22" width="26" height="16" rx="3" fill="#dbe7fb" />
+        <path d="M29 22v16" stroke="var(--talavera)" strokeWidth="2" />
         {/* Frame, cowcatcher, wheels */}
         <rect x="4" y="56" width="116" height="6" rx="2" fill="#2f2a36" />
         <path d="M120 56 L128 66 L114 66 Z" fill="#2f2a36" />
@@ -214,7 +233,7 @@ function Locomotive() {
 // or focusing the strip pauses the train; reduced motion parks it in view.
 export function StickerBanner() {
   return (
-    <div className="train-strip overflow-hidden pt-10 [container-type:inline-size]">
+    <div className="train-strip overflow-hidden pt-16 [container-type:inline-size]">
       <div className="animate-train w-max">
         <ul className="flex items-end" aria-label="A few things about me">
           {profile.stickers.map((s, i) => (

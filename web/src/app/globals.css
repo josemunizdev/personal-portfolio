@@ -19,6 +19,8 @@
   --talavera-soft: #e3ebf8;
   --good: #2f7d4f;
   --bad: #b3261e;
+  --steam: #ffffff;
+  --steam-edge: #cfc8d8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +38,8 @@
     --talavera-soft: #1a2640;
     --good: #6fcf97;
     --bad: #ff8a80;
+    --steam: #e9e4f0;
+    --steam-edge: #e9e4f0;
   }
 }
 
@@ -53,6 +57,8 @@
   --talavera-soft: #1a2640;
   --good: #6fcf97;
   --bad: #ff8a80;
+  --steam: #e9e4f0;
+  --steam-edge: #e9e4f0;
 }
 
 @theme inline {
@@ -167,13 +173,21 @@ body {
   }
 }
 
+/* Steam: a cloud forms at the stack, then grows as it drifts back (the
+   train is moving right) and up before fading out. */
 @keyframes puff {
   0% {
-    transform: translate(0, 0) scale(0.4);
-    opacity: 0.7;
+    transform: translate(0, 0) scale(0.35);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 0.9;
   }
   100% {
-    transform: translate(-18px, -22px) scale(1.4);
+    transform: translate(-44px, -46px) scale(1.9);
     opacity: 0;
   }
 }
@@ -246,7 +260,7 @@ body {
   transform-origin: center;
 }
 .animate-puff {
-  animation: puff 1.4s ease-out infinite;
+  animation: puff 2.1s ease-out infinite;
   transform-box: fill-box;
   transform-origin: center;
 }

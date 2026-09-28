@@ -97,41 +97,84 @@ body {
 }
 
 /*
- * Sticker hop: flat on the ground, jump tilting 45deg right, land flat,
- * jump tilting 45deg left, land flat. Rising eases out and falling eases in,
- * so each hop reads as a jump rather than a wobble.
+ * Cargo rock: each sticker rides a flatcar and hops, always tilted. It sits
+ * at 45deg right, hops holding the tilt, flicks to 45deg left at the top of
+ * the hop (about 0.1s), and lands tilted left; then the same back to the
+ * right. The flick is the only moment it passes upright.
  */
-@keyframes hop {
+@keyframes rock {
   0% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(45deg);
+  }
+  16% {
+    transform: translateY(0) rotate(45deg);
     animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
   }
-  25% {
-    transform: translateY(-18px) rotate(45deg);
+  30% {
+    transform: translateY(-14px) rotate(42deg);
+    animation-timing-function: linear;
+  }
+  36% {
+    transform: translateY(-13px) rotate(-42deg);
     animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
   }
   50% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(-45deg);
+  }
+  66% {
+    transform: translateY(0) rotate(-45deg);
     animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
   }
-  75% {
-    transform: translateY(-18px) rotate(-45deg);
+  80% {
+    transform: translateY(-14px) rotate(-42deg);
+    animation-timing-function: linear;
+  }
+  86% {
+    transform: translateY(-13px) rotate(42deg);
     animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
   }
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(45deg);
   }
 }
 
-/* The track holds two copies of the stickers; sliding it by half its width
-   lines the second copy up exactly where the first began, so the loop is
-   seamless. Starting at -50% and ending at 0 moves everything left to right. */
-@keyframes march {
+/* The train enters fully off the left edge and leaves fully past the right
+   edge. cqw is the width of the footer strip (a size container), so the trip
+   is correct at any screen width. */
+@keyframes train {
   from {
-    transform: translateX(-50%);
+    transform: translateX(-100%);
   }
   to {
-    transform: translateX(0);
+    transform: translateX(100cqw);
+  }
+}
+
+/* Small vertical jostle so the cars feel like they're rolling on rails. */
+@keyframes jostle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes puff {
+  0% {
+    transform: translate(0, 0) scale(0.4);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-18px, -22px) scale(1.4);
+    opacity: 0;
   }
 }
 
@@ -183,16 +226,29 @@ body {
   }
 }
 
-.animate-hop {
-  animation: hop 1.6s infinite;
+.animate-rock {
+  animation: rock 1.6s infinite;
   transform-origin: 50% 50%;
 }
-.animate-march {
-  animation: march 45s linear infinite;
+.animate-train {
+  animation: train 38s linear infinite;
 }
-.animate-march:hover,
-.animate-march:focus-within {
+.train-strip:hover .animate-train,
+.train-strip:focus-within .animate-train {
   animation-play-state: paused;
+}
+.animate-jostle {
+  animation: jostle 0.4s ease-in-out infinite;
+}
+.animate-spin-wheel {
+  animation: spin 0.9s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.animate-puff {
+  animation: puff 1.4s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 .animate-swing {
   animation: swing 0.5s ease-in-out;
@@ -224,6 +280,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .animate-train {
+    animation: none !important;
+    transform: none;
+    margin-inline: auto;
+  }
   html {
     scroll-behavior: auto;
   }

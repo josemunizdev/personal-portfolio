@@ -141,41 +141,98 @@ export function StickerArt({ id, className = "size-full" }: { id: string; classN
   );
 }
 
-// Footer banner: die-cut stickers marching left to right, each hopping with
-// a 45deg tilt right, then left. Two copies of the row make the loop seamless;
-// the second copy is hidden from screen readers. Hovering pauses the march.
-function StickerRow({ copy }: { copy: number }) {
+function Wheel({ cx }: { cx: number }) {
   return (
-    <ul
-      className="flex shrink-0 gap-5 pr-5"
-      aria-label={copy === 0 ? "A few things about me" : undefined}
-      aria-hidden={copy === 0 ? undefined : true}
-    >
-      {profile.stickers.map((s, i) => (
-        <li
-          key={s.id}
-          title={s.label}
-          className="animate-hop"
-          // Staggered start so the row ripples instead of jumping in unison.
-          style={{ animationDelay: `${-i * 0.23}s` }}
-        >
-          <span className="block size-12 rounded-2xl border-4 border-white bg-white p-1 shadow-md ring-1 ring-black/5 transition-transform hover:scale-110 sm:size-14">
-            <StickerArt id={s.id} />
-          </span>
-          <span className="sr-only">{s.label}</span>
-        </li>
-      ))}
-    </ul>
+    <g className="animate-spin-wheel">
+      <circle cx={cx} cy="0" r="6" fill="#2f2a36" />
+      <circle cx={cx} cy="0" r="2" fill="#9a93a3" />
+      <path d={`M${cx - 5} 0h10`} stroke="#9a93a3" strokeWidth="1.2" />
+    </g>
   );
 }
 
+// A flatcar carrying one sticker. The sticker rocks on its own clock; the car
+// jostles slightly so the whole train reads as rolling.
+function Car({ id, label, index }: { id: string; label: string; index: number }) {
+  return (
+    <li className="relative flex w-20 shrink-0 flex-col items-center sm:w-24" title={label}>
+      <span
+        className="animate-rock relative z-10 mb-1 block size-11 rounded-xl border-4 border-white bg-white p-0.5 shadow-md ring-1 ring-black/5 sm:size-12"
+        style={{ animationDelay: `${-index * 0.27}s` }}
+      >
+        <StickerArt id={id} />
+      </span>
+      <svg viewBox="0 0 96 26" className="animate-jostle w-full" aria-hidden="true" style={{ animationDelay: `${-index * 0.13}s` }}>
+        <rect x="4" y="2" width="88" height="10" rx="3" fill="var(--accent)" />
+        <rect x="4" y="2" width="88" height="3" rx="1.5" fill="#ffffff" opacity="0.25" />
+        <g transform="translate(0 18)">
+          <Wheel cx={22} />
+          <Wheel cx={74} />
+        </g>
+      </svg>
+      {/* Coupler to the next car. */}
+      <span className="absolute right-[-6px] bottom-[14px] h-1 w-3 rounded-full bg-faint" aria-hidden="true" />
+      <span className="sr-only">{label}</span>
+    </li>
+  );
+}
+
+function Locomotive() {
+  return (
+    <li className="w-28 shrink-0 sm:w-32" aria-hidden="true">
+      <svg viewBox="0 0 128 80" className="animate-jostle w-full">
+        {/* Steam */}
+        <circle cx="96" cy="10" r="6" fill="var(--faint)" className="animate-puff" />
+        <circle cx="96" cy="10" r="5" fill="var(--faint)" className="animate-puff" style={{ animationDelay: "-0.7s" }} />
+        {/* Smokestack and boiler */}
+        <rect x="90" y="16" width="12" height="18" rx="2" fill="#2f2a36" />
+        <rect x="44" y="30" width="72" height="26" rx="10" fill="var(--accent)" />
+        <circle cx="116" cy="43" r="5" fill="#f4d35e" />
+        {/* Cab */}
+        <rect x="8" y="14" width="42" height="42" rx="4" fill="var(--talavera)" />
+        <rect x="4" y="10" width="50" height="6" rx="2" fill="#2f2a36" />
+        <rect x="16" y="22" width="26" height="14" rx="2" fill="#dbe7fb" />
+        <text x="29" y="50" textAnchor="middle" fill="#ffffff" fontFamily="ui-monospace, monospace" fontSize="10" fontWeight="700">
+          JM
+        </text>
+        {/* Frame, cowcatcher, wheels */}
+        <rect x="4" y="56" width="116" height="6" rx="2" fill="#2f2a36" />
+        <path d="M120 56 L128 66 L114 66 Z" fill="#2f2a36" />
+        <g transform="translate(0 68)">
+          <Wheel cx={24} />
+          <Wheel cx={62} />
+          <Wheel cx={96} />
+        </g>
+      </svg>
+    </li>
+  );
+}
+
+// Footer banner: a little integration express. The locomotive leads a train
+// of flatcars left to right across the page, and every car carries one
+// sticker, the way an integration carries payloads between systems. Hovering
+// or focusing the strip pauses the train; reduced motion parks it in view.
 export function StickerBanner() {
   return (
-    <div className="overflow-hidden py-8 [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
-      <div className="animate-march flex w-max">
-        <StickerRow copy={0} />
-        <StickerRow copy={1} />
+    <div className="train-strip overflow-hidden pt-10 [container-type:inline-size]">
+      <div className="animate-train w-max">
+        <ul className="flex items-end" aria-label="A few things about me">
+          {profile.stickers.map((s, i) => (
+            <Car key={s.id} id={s.id} label={s.label} index={i} />
+          ))}
+          <Locomotive />
+        </ul>
       </div>
+      {/* Rails and ties, full width. */}
+      <div
+        className="h-2 border-t-2 border-faint"
+        style={{
+          backgroundImage: "repeating-linear-gradient(90deg, var(--faint) 0 3px, transparent 3px 14px)",
+          backgroundSize: "14px 6px",
+          backgroundRepeat: "repeat-x",
+        }}
+        aria-hidden="true"
+      />
     </div>
   );
 }

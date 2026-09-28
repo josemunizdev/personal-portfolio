@@ -96,13 +96,42 @@ body {
   outline-offset: 2px;
 }
 
-@keyframes bob {
-  0%,
-  100% {
-    transform: translateY(0) rotate(var(--tilt, 0deg));
+/*
+ * Sticker hop: flat on the ground, jump tilting 45deg right, land flat,
+ * jump tilting 45deg left, land flat. Rising eases out and falling eases in,
+ * so each hop reads as a jump rather than a wobble.
+ */
+@keyframes hop {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  25% {
+    transform: translateY(-18px) rotate(45deg);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
   }
   50% {
-    transform: translateY(-6px) rotate(var(--tilt, 0deg));
+    transform: translateY(0) rotate(0deg);
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  75% {
+    transform: translateY(-18px) rotate(-45deg);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+/* The track holds two copies of the stickers; sliding it by half its width
+   lines the second copy up exactly where the first began, so the loop is
+   seamless. Starting at -50% and ending at 0 moves everything left to right. */
+@keyframes march {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
   }
 }
 
@@ -154,8 +183,16 @@ body {
   }
 }
 
-.animate-bob {
-  animation: bob 3.2s ease-in-out infinite;
+.animate-hop {
+  animation: hop 1.6s infinite;
+  transform-origin: 50% 50%;
+}
+.animate-march {
+  animation: march 45s linear infinite;
+}
+.animate-march:hover,
+.animate-march:focus-within {
+  animation-play-state: paused;
 }
 .animate-swing {
   animation: swing 0.5s ease-in-out;

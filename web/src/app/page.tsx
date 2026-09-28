@@ -213,7 +213,7 @@ export default function Home() {
         </Section>
       </main>
       <footer className="border-t border-line">
-        <div className="mx-auto max-w-5xl px-4 pt-10 pb-2 sm:px-6">
+        <div className="pt-4">
           <StickerBanner />
         </div>
         <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-8 font-mono text-xs text-faint sm:flex-row sm:justify-between sm:px-6">

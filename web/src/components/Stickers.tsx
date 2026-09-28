@@ -141,21 +141,23 @@ export function StickerArt({ id, className = "size-full" }: { id: string; classN
   );
 }
 
-// Footer banner: die-cut style stickers bobbing out of sync with each other.
-export function StickerBanner() {
+// Footer banner: die-cut stickers marching left to right, each hopping with
+// a 45deg tilt right, then left. Two copies of the row make the loop seamless;
+// the second copy is hidden from screen readers. Hovering pauses the march.
+function StickerRow({ copy }: { copy: number }) {
   return (
-    <ul className="flex flex-wrap justify-center gap-3" aria-label="A few things about me">
+    <ul
+      className="flex shrink-0 gap-5 pr-5"
+      aria-label={copy === 0 ? "A few things about me" : undefined}
+      aria-hidden={copy === 0 ? undefined : true}
+    >
       {profile.stickers.map((s, i) => (
         <li
           key={s.id}
           title={s.label}
-          className="animate-bob"
-          style={
-            {
-              animationDelay: `${(i * 0.37) % 3}s`,
-              "--tilt": `${((i * 7) % 13) - 6}deg`,
-            } as React.CSSProperties
-          }
+          className="animate-hop"
+          // Staggered start so the row ripples instead of jumping in unison.
+          style={{ animationDelay: `${-i * 0.23}s` }}
         >
           <span className="block size-12 rounded-2xl border-4 border-white bg-white p-1 shadow-md ring-1 ring-black/5 transition-transform hover:scale-110 sm:size-14">
             <StickerArt id={s.id} />
@@ -164,5 +166,16 @@ export function StickerBanner() {
         </li>
       ))}
     </ul>
+  );
+}
+
+export function StickerBanner() {
+  return (
+    <div className="overflow-hidden py-8 [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
+      <div className="animate-march flex w-max">
+        <StickerRow copy={0} />
+        <StickerRow copy={1} />
+      </div>
+    </div>
   );
 }

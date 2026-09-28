@@ -1,28 +1,58 @@
 @import "tailwindcss";
 
-/* Color tokens. Light is the default; dark follows the OS setting. */
+/*
+ * Color tokens. Jacaranda purple is the brand color (Guadalajara's jacaranda
+ * trees); talavera blue is the secondary accent. Light is the default, dark
+ * ("2 a.m. mode") follows the OS unless the visitor picks one explicitly.
+ */
 :root {
-  --bg: #fafaf9;
+  --bg: #fbfaf8;
   --surface: #ffffff;
-  --ink: #1c1917;
-  --muted: #57534e;
-  --faint: #a8a29e;
-  --line: #e7e5e4;
-  --accent: #0f766e;
-  --accent-soft: #ccfbf1;
+  --ink: #1d1a22;
+  --muted: #5b5563;
+  --faint: #9a93a3;
+  --line: #e8e4ec;
+  --grid: rgb(109 74 168 / 0.06);
+  --accent: #6d4aa8;
+  --accent-soft: #ede6f7;
+  --talavera: #1f4e9c;
+  --talavera-soft: #e3ebf8;
+  --good: #2f7d4f;
+  --bad: #b3261e;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0c0a09;
-    --surface: #1c1917;
-    --ink: #f5f5f4;
-    --muted: #a8a29e;
-    --faint: #78716c;
-    --line: #292524;
-    --accent: #5eead4;
-    --accent-soft: #134e4a;
+  :root:not([data-theme="light"]) {
+    --bg: #120f17;
+    --surface: #1b1722;
+    --ink: #f3f0f7;
+    --muted: #b1a9bb;
+    --faint: #7c7486;
+    --line: #2c2636;
+    --grid: rgb(182 154 232 / 0.05);
+    --accent: #b69ae8;
+    --accent-soft: #2e2246;
+    --talavera: #85aaeb;
+    --talavera-soft: #1a2640;
+    --good: #6fcf97;
+    --bad: #ff8a80;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #120f17;
+  --surface: #1b1722;
+  --ink: #f3f0f7;
+  --muted: #b1a9bb;
+  --faint: #7c7486;
+  --line: #2c2636;
+  --grid: rgb(182 154 232 / 0.05);
+  --accent: #b69ae8;
+  --accent-soft: #2e2246;
+  --talavera: #85aaeb;
+  --talavera-soft: #1a2640;
+  --good: #6fcf97;
+  --bad: #ff8a80;
 }
 
 @theme inline {
@@ -34,6 +64,10 @@
   --color-line: var(--line);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-talavera: var(--talavera);
+  --color-talavera-soft: var(--talavera-soft);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
@@ -43,8 +77,13 @@ html {
   scroll-padding-top: 5rem;
 }
 
+/* Engineer's-notebook graph paper, kept faint so it never competes with text. */
 body {
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--ink);
 }
 
@@ -52,8 +91,110 @@ body {
   background: var(--accent-soft);
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--tilt, 0deg));
+  }
+  50% {
+    transform: translateY(-6px) rotate(var(--tilt, 0deg));
+  }
+}
+
+@keyframes swing {
+  0% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(-45deg);
+  }
+  70% {
+    transform: rotate(12deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0) rotate(-2deg);
+  }
+  25% {
+    transform: translateX(-3px) rotate(-2.5deg);
+  }
+  75% {
+    transform: translateX(3px) rotate(-1.5deg);
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-bob {
+  animation: bob 3.2s ease-in-out infinite;
+}
+.animate-swing {
+  animation: swing 0.5s ease-in-out;
+  transform-origin: 80% 80%;
+}
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+.animate-pop {
+  animation: pop 0.35s ease-out both;
+}
+
+/* 3D flip for the "Off the clock" cards. */
+.flip {
+  perspective: 1000px;
+}
+.flip-inner {
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+}
+.flip[data-flipped="true"] .flip-inner {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -46,7 +46,8 @@ export const profile = {
   about: [
     "I own MuleSoft delivery end to end at DePaul University: API design and naming standards, DataWeave transformation, CI/CD across Dev, UAT, and Production, and production support for the integrations connecting PeopleSoft Campus Solutions, Oracle Fusion Cloud HCM, Salesforce, and third-party SaaS.",
     "I work directly with registrar, financial aid, HR, student financial services, and public safety staff to turn business requirements into integrations that someone else can support at 2 a.m. I was the first person at the university to earn MuleSoft Developer II, and I'm working toward MuleSoft Platform Integration Architect.",
-    "Outside of work I'm finishing a graduate degree in software engineering with a focus on AI, which is where the MLOps projects below come from. I grew up in Guadalajara and work fluently in Spanish and English.",
+    "I'm a first-generation college graduate from Guadalajara, which is a big part of why I work in higher ed: the systems I keep running are the ones that get students registered, funded, and paid. I work fluently in Spanish and English, and I'm finishing a graduate degree in software engineering with a focus on AI.",
+    "Off the clock I build PCs, 3D print things I probably don't need, run a small homelab, and play Magic: The Gathering. My cable management is better than it has any right to be. Supervised, at all times, by a dog and a cat.",
   ],
 
   metrics: <Metric[]>[
@@ -317,4 +318,91 @@ export const profile = {
   ],
 
   languages: ["Spanish (native)", "English (fluent)"],
+
+  // Plain-English notes shown by the "Explain it" toggle in the Skills section.
+  glossary: <Record<string, string>>{
+    "MuleSoft Anypoint Platform":
+      "The toolkit for building, securing, and running the APIs that connect systems.",
+    DataWeave: "The language that reshapes data as it moves between systems.",
+    RAML: "A blueprint that describes an API before anyone writes code for it.",
+    "API Manager": "Where every API gets its rules: who can call it, and how often.",
+    "CloudHub 2.0": "MuleSoft's cloud, where the integrations actually run.",
+    MUnit: "Automated tests for integrations, run on every build.",
+    "PeopleSoft Campus Solutions":
+      "The student system: admissions, registration, financial aid, grades.",
+    "Oracle Fusion Cloud HCM": "The HR and payroll system.",
+    Salesforce: "The CRM that tracks prospective students, alumni, and donors.",
+    "GitHub Actions": "Robots that build, test, and deploy code whenever it changes.",
+    "Azure Key Vault": "A safe for passwords and keys, so they never live in code.",
+    PeopleCode: "PeopleSoft's built-in programming language.",
+    SQR: "An old-school reporting language that still runs a surprising amount of higher ed.",
+    MLflow: "A lab notebook for machine learning experiments.",
+    DVC: "Version control for datasets, the way Git is for code.",
+    "Hybrid cloud integration":
+      "Connecting systems in the cloud with ones still running on campus servers.",
+  },
+
+  // "Off the clock" cards. Front is the headline, back is the detail on flip.
+  offClock: <{ id: string; title: string; kicker: string; front: string; back: string }[]>[
+    {
+      id: "pc",
+      title: "PC builds",
+      kicker: "Hardware",
+      front: "Parts, thermals, and zip ties.",
+      back: "I build my own machines. Picking parts is fun; the cable management is the best part. Yes, really.",
+    },
+    {
+      id: "printer",
+      title: "3D printing",
+      kicker: "Maker",
+      front: "If it can be modeled, it can be printed.",
+      back: "Practical prints for the desk and homelab, and a few that exist purely because I could.",
+    },
+    {
+      id: "homelab",
+      title: "Homelab",
+      kicker: "Infrastructure",
+      front: "A NAS, a tunnel, and too many dashboards.",
+      back: "Self-hosted storage and services at home. It's where I try things before I'd ever suggest them at work.",
+    },
+    {
+      id: "magic",
+      title: "Magic: The Gathering",
+      kicker: "Games",
+      front: "Deck building is just systems design with art.",
+      back: "Deck tuning, game nights, and arguing about the stack. Turns out rules engines are rules engines.",
+    },
+    {
+      id: "dog",
+      title: "The dog",
+      kicker: "Management",
+      front: "Head of morning standups.",
+      back: "Enforces walk breaks, reviews every delivery at the door, and has never once filed a ticket.",
+    },
+    {
+      id: "cat",
+      title: "The cat",
+      kicker: "Management",
+      front: "Chief keyboard inspector.",
+      back: "Performs unscheduled QA by walking across the keyboard during deploys. Approval not required.",
+    },
+  ],
+
+  // Footer sticker banner. Order is display order; ids map to SVGs in Stickers.tsx.
+  stickers: <{ id: string; label: string }[]>[
+    { id: "jacaranda", label: "Guadalajara jacaranda" },
+    { id: "mexico", label: "Mexico" },
+    { id: "firstgen", label: "First-gen grad" },
+    { id: "pride", label: "Pride" },
+    { id: "pc", label: "PC builder" },
+    { id: "cable", label: "Cable management enthusiast" },
+    { id: "printer", label: "3D printing" },
+    { id: "nas", label: "Homelab" },
+    { id: "card", label: "Magic: The Gathering" },
+    { id: "dog", label: "Dog dad" },
+    { id: "cat", label: "Cat dad" },
+    { id: "headphones", label: "Music" },
+    { id: "taco", label: "Tacos" },
+    { id: "mulesoft", label: "Integration nerd" },
+  ],
 } as const;
